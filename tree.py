@@ -6,13 +6,6 @@ class node:
         self.properties={}
         self.children=[]
 
-    def __init__(self,t,h,ps,prop,children):
-        self.type=t
-        self.hash=h
-        self.psource=ps
-        self.properties=prop
-        self.children=children
-
     def add_child(self,child):
         self.children.append(child)
 
@@ -32,7 +25,7 @@ class tree:
         self.root=root
         
 def dfs_node_level(node):
-    if(node==None) return 
+    if(node==None): return 
     for i in node.children:
         print (i)
         dfs_node_level(i)
@@ -40,7 +33,7 @@ def dfs_node_level(node):
 
 def dfs(t):
     if(t==None): return
-    elif (t.root==None) return
+    elif (t.root==None): return
     else dfs_node_level(t.root)
     
     
