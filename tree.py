@@ -23,8 +23,20 @@ class tree:
         self.root=root
         
 
+def dfs(t):
+    if(t==None): return
+    elif (t.root==None) return
+    else dfs_node_level(t.root)
+
+def dfs_node_level(node):
+    if(node==None) return 
+    for i in node.children:
+        print (i)
+        dfs_node_level(i)
+    pass
+
+
+    
 b=node()
-c=node()
-b.add_child(c)
-print (b.children)
-        
+node=3
+print (node)
