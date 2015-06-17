@@ -6,6 +6,8 @@ class node:
         self.properties={}
         self.children=[]
 
+<<<<<<< Updated upstream
+=======
     # def __init__(self,t,h,ps,prop,children):
     #     self.type=t
     #     self.hash=h
@@ -13,6 +15,7 @@ class node:
     #     self.properties=prop
     #     self.children=children
 
+>>>>>>> Stashed changes
     def add_child(self,child):
         self.children.append(child)
 
@@ -41,7 +44,11 @@ def dfs_node_level(node):
 def dfs(t):
     if(t==None): return
     elif (t.root==None): return
+<<<<<<< Updated upstream
+    else dfs_node_level(t.root)
+=======
     else :dfs_node_level(t.root)
+>>>>>>> Stashed changes
     
     
 b=node()

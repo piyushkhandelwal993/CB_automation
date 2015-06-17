@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time ,re
 from bs4 import BeautifulSoup
+from tree import *
 
 # now = datetime.datetime.now()
 
@@ -140,6 +141,7 @@ def selectOtpOption(soup, otpInfo):
 
     
 driver = webdriver.Firefox()
+page_tree = tree()
 
 driver.get("http://localhost:8000/testform.html");
 time.sleep(10)

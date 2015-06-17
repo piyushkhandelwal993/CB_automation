@@ -1,0 +1,742 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+<HEAD>
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no cache">
+<meta HTTP-EQUIV="Pragma" CONTENT="no cache">
+<meta HTTP-EQUIV="Expires" CONTENT="0">
+<meta HTTP-EQUIV="content-type" CONTENT="text/html; charset=utf-8">
+
+	<TITLE>Verified By Visa</TITLE>
+	<LINK REL="stylesheet" HREF="en_US_ICICI_Retail/style.css" TYPE="text/css">
+	<!-- x-out.js has code to POST PAReq to CAP when user closes window. -->
+	<script language=javascript src="en_US_ICICI_Retail/x-out.js" ></script>
+	<script language=javascript src="en_US_ICICI_Retail/pwdbase.js" ></script>
+	<script language=javascript src="en_US_ICICI_Retail/showhint.js" ></script>
+	<script language=javascript src="Riskfort/rfutil.js" ></script>
+	<script language=javascript src="en_US_ICICI_Retail/optin.js" ></script>
+
+	<SCRIPT LANGUAGE="JavaScript">
+		var showOtp = false;
+		var showPwd = true;
+
+		function getPartialSlotDefinition(slot1,slot2,slot3)
+		{
+			var pwdInfoStr = "";
+			pwdInfoStr = getSentence(slot1)+', '+getSentence(slot2)+' and '+getSentence(slot3)
+			return pwdInfoStr;
+		}
+
+		function popUp2(strURL)
+		{
+			popUP2 = window.open(document.passwdForm.Locale.value + strURL,'popUp2','width=390,height=400,scrollbars=no,screenX=100,screenY=100,left=100,top=100');
+			popUP2.focus();
+		}
+
+		function popUp3(strURL) {
+			popUP3 = window.open("en_US_ICICI_Retail/" + strURL,'popUp3', 'width=450, height=400,scrollbars=yes,resizable=yes,screenX=100,screenY=100,left=100,top=100"');
+			popUP3.focus();
+		}
+
+		function forgotPasswordLink(object)
+		{
+			document.passwdForm.CustData.value="GetTransactionPhaseReq~" + chname + "~" + mobilenumber + "~" + email + "~" + singleOtpOption + "~" + isAbridgedWithSingleOtp + "~" + isCardMigrated + "~" + regOption;
+			OnFPWDHandler(object);
+		}
+
+		function showChannelSelectPage() {
+			if(channelSource == "DCMS" && (mobilenumber == null || mobilenumber == "")) {
+				popUp3('redirectpopup.htm');
+			} else {
+				if(channelSource == "DB" && (mobilenumber == null || mobilenumber == "")) {
+					document.passwdForm.otpDestinationOption[2].checked = true;
+					pwdBaseOtpChannelSelected(1);
+				} else {
+					document.all.PASSWDPAGE.style.display = "none";
+					document.all.pwdbaseotppage.style.display = "inline";
+				}
+			}
+		}
+
+		function showPwdPage() {
+			document.all.PASSWDPAGE.style.display = "inline";
+			document.all.pwdbaseotppage.style.display = "none";
+			return false;
+		}
+
+		function pwdBaseOtpChannelSelected(userInput) {
+			closing = false;
+
+			if(document.passwdForm.otpDestinationOption[2].checked) {
+				if(channelSource == "DCMS") {
+					document.all.PASSWDPAGE.style.display = "inline";
+					document.all.pwdbaseotppage.style.display = "none";
+					showOtp = false;
+					showPwd = true;
+					showOtpBlock();
+					showHidePwdBlock();
+					popUp3('redirectpopup.htm');
+					return false;
+				}
+			}
+
+			if(userInput == 1) {
+				var mode = document.forms[0].elements["otpDestinationOption"];
+				var x;
+				var len = document.passwdForm.otpDestinationOption.length;
+				for(x=0;x< len;x++) {
+					if(document.passwdForm.otpDestinationOption[x].checked) 
+						break;
+				}
+				if(x<len) {
+					modeselected = mode[x].value;
+				} else {
+					alert("No option was selected");
+				}
+			}
+
+			document.passwdForm.pin.value = "AUTHMODE~"+modeselected;
+			document.passwdForm.CustData.value = "GetTransactionPhaseReq~" + chname + "~" + mobilenumber + "~" + email + "~" + singleOtpOption + "~" + isAbridgedWithSingleOtp + "~" + isCardMigrated + "~" + regOption + "~" + encrypttext + "~" + kaptchaurl + "~" + errormsg + "~SHOWOTP";
+			document.passwdForm.submit();
+			return false;
+			stopTimer = 1;
+		}
+
+		function submitPassword() {
+			closing = false;
+			if(showOtp && !showPwd) {
+				document.passwdForm.pin.value = "OTP~" +document.passwdForm.otpPassword.value;
+				document.passwdForm.CustData.value = "GetTransactionPhaseReq~" + chname + "~" + mobilenumber + "~" + email + "~" + singleOtpOption + "~" + isAbridgedWithSingleOtp + "~" + isCardMigrated + "~" + regOption + "~" + encrypttext + "~" + kaptchaurl + "~" + errormsg + "~SHOWOTP"
+				document.passwdForm.forgotPassword.value = 0;
+				return OnSubmitHandler();
+			} else {
+				return OnSubmitHandler1();
+			}
+		}
+
+		function showOtpBlock() {
+			if(showOtp) {
+				document.all.enterotppage.style.display = "inline";
+			} else {
+				document.all.enterotppage.style.display = "none";
+			}
+		}
+
+		function showHidePwdBlock() {
+			if(showPwd) {
+				document.all.PASSWDPAGE.style.display = "inline";
+			} else {
+				document.all.PASSWDPAGE.style.display = "none";
+			}
+		}
+
+	</SCRIPT>
+
+	<SCRIPT LANGUAGE="JavaScript">
+
+		var refreshing = false;
+		var navigating = false;
+		var closing = true;
+		var	IsCancelButton = false;
+		var chname;
+		var errormsg;
+		var fyp = false;
+
+		var custdata = "";
+		var calloutmsg = "GetTransactionPhaseReq~MEGHA MALHOTRA~8377090572~MEGHA.815@GMAIL.COM~false~false~false";
+
+		if(calloutmsg == "") {
+			calloutmsg = custdata;
+		}
+
+		var custdatatokens = custdata.split("~");
+		parseCalloutData(custdatatokens);
+
+		var	calloutmsgtokens = calloutmsg.split("~");
+		parseCalloutData(calloutmsgtokens);
+
+		if(singleOtpOption == false && isAbridgedWithSingleOtp == true) {
+			fyp = true;
+		}
+
+		// Array of month Names
+			var monthNames = new Array(
+			"Jan","Feb","Mar","Apr","May","Jun","Jul",
+			"Aug","Sept","Oct","Nov","Dec");
+			var date = new Date();
+		date = monthNames[date.getMonth()]  + " " + date.getDate() + ", " + " " + date.getFullYear();
+
+		function closeButton(object)
+		{
+			if (confirm("Are you sure you want to cancel? This will send a \"Transaction Declined\" message to the merchant. You may not be able to continue with the transaction. Click \"Ok\" to cancel out of this transaction or \"Cancel\" to return to the authentication page."))
+			{
+				IsCancelButton = true;
+				OnCancelHandler(object);
+			}
+		}
+
+		function onBeforeUnloadHandler(object)
+		{
+			if ( !refreshing && closing && !IsCancelButton)
+			{
+				var isChipInAuth = ChipCardInAuthList();
+				if (!isChipInAuth || (isChipInAuth && !installChipPlugin))
+				{
+					event.returnValue = "Your purchase has not completed!\n To complete your purchase click 'Cancel'.\nThen submit your password on the current page.";
+				}
+			}
+
+		}
+
+		function onFocusHandler()
+		{
+			closing = true;
+		}
+
+
+		var LoadError = 0;
+		var debugging = 0;
+		function debugAlert(msg)
+		{
+			if ( debugging == 1 )
+			{
+				alert(msg);
+			}
+		}
+
+		function init()
+		{
+			var so = new SWFObject("Riskfort/rfdevice.swf", "cookiemanager", "0", "0", "6", "#ffff00");
+			so.addParam("allowScriptAccess", "always");
+			so.write("flashcontent");
+
+			var divid = document.getElementById("flashsetting");
+			divid.style.display = 'block'; //intially hidden
+		}
+
+		
+
+function OnClickHandler()
+{
+	df = document.forms[0];
+	if ( df.submitted.value == 1 )
+	{
+		return;
+	}
+	pwd = df.pin.value;
+	if ( true ) {
+		var objCH = df.cardHolderSelect;
+		if ( objCH != null && objCH.options ) {
+			df.cardHolder.value = objCH.options[objCH.selectedIndex].value;
+		}
+		var oATyp = df.authSelect;
+		if ( oATyp == null ) {
+			oVal = df.authDefaultSelect.value;
+			oATyp = oVal;
+		} else {
+			oVal = oATyp.options[oATyp.selectedIndex].value;
+		}
+		if ( oATyp != null ) {
+			if ( oVal.indexOf("Visa Password") != -1 ) { 
+				df.authType.value = "Visa Password";
+				df.submitted.value=1
+				df.submit();
+			}
+		} else {
+			df.authType.value = "Visa Password";
+			df.submit();
+		}
+	}
+}
+
+
+
+
+		var plugin;
+		var noRdrMsgDisplayed=false;
+		var canFallBack = false;
+
+		var pluginInstallURL = "";
+
+		var chipPluginVersion = "";
+
+		function OnPageInit()
+		{
+
+
+			// TO HANDLE THE EVENT WHEN USER CLOSES POPUP
+			// pre-generate the HTML that is needed to POST to CAP when window is closed.
+			// does not work properly on NS if generated in the close-window event handler
+			gatherFormData(document.passwdForm, "%#*@_XOUT_@*#%");
+			// 0 = 0 if Riskfort is not Enabled !!
+
+			// added so as not to show congrats page in rtnbase
+
+			document.getElementById('PASSWDPAGE').style.display = "inline";
+			if ("0" != "0") {
+				if ("0" == "1") {
+					// Setting the Browser Cookie
+					// alert("Setting the cookie");
+					setBrowserCookie("RiskfortCookie","");
+
+				}
+				else {
+					// Setting the Flash Cookie
+					init();
+					// alert("Setting the flash cookie");
+					setFlashCookie("RiskfortCookie","");
+				}
+			}
+
+			if(fyp) {
+				document.passwdForm.CustData.value = "GetTransactionPhaseReq~" + chname + "~" + mobilenumber + "~" + email + "~" + singleOtpOption + "~" + isAbridgedWithSingleOtp + "~" + isCardMigrated + "~" + regOption;
+				forgotPasswordLink(this);
+			}
+
+			if(calloutmsgtokens != null && calloutmsgtokens[0] == "VerifyPasswordReq" && channelSource == "DCMS") {
+				showOtp = false;
+				showPwd = true;
+				showChannelSelectPage();
+			} else if(custdatatokens != null && custdatatokens.length >= 12 && custdatatokens[11] == "SHOWOTP") {
+				showOtp = true;
+				showPwd = false;
+				showOtpBlock();
+				showHidePwdBlock();
+			}
+
+			// uncomment the following if a client-side timeout is to be enabled.
+			// after the timeout period, the CAP dialog will be auto-POSTed resulting in
+			// a failed PARes.
+			// Change the 2nd parameter to suit the timeout needed;
+			// the value should be in milli seconds.
+			// setTimeout("ForceCancel()", 15000); // treat as cancelled txn if not posted in 15 seconds.
+
+			closing=true;
+			window.history.go(1);
+			SetSubmit();
+			if (pluginInstallURL != null && pluginInstallURL != "")
+			{
+				pluginInstallURL += "defaultauto.htm";
+			}
+		
+			if(1301 == 1999 || 1301 == 1204)
+			{
+				popUp2('pwdhint.htm');
+			}
+
+			ResetSubmit();
+			//document.passwdForm.pin.focus();
+		}
+
+		function ForceCancel() {
+			closing=false;
+			var objCardHolder = document.passwdForm.cardHolderSelect;
+			if ( objCardHolder != null ) {
+				var chIndex = objCardHolder.selectedIndex;
+				document.passwdForm.cardHolder.value = objCardHolder.options[chIndex].text;
+			}
+			document.passwdForm.authType.value = document.forms[0].authDefaultSelect.value;
+			document.passwdForm.cancelHit.value = "%#*@_TIMEDOUT_@*#%";
+			if ( IsNetscapeOnSolaris() )
+			{
+				setTimeout('document.passwdForm.submit()', 500);
+			}
+			else
+			{
+				document.passwdForm.submit();
+			}
+		}
+
+		function OnSubmitHandler1()
+		{
+			var pinValue = document.passwdForm.pin.value;
+			if(!pinValue.match(/^\d{6}$/g)){
+				alert('Please enter 6 digit 3D Secure PIN !');
+				document.passwdForm.pin.focus();
+				return false;
+			}
+			document.passwdForm.CustData.value = "GetTransactionPhaseReq~" + chname + "~" + mobilenumber + "~" + email + "~" + singleOtpOption + "~" + isAbridgedWithSingleOtp + "~" + isCardMigrated + "~" + regOption;
+			document.passwdForm.forgotPassword.value = 0;
+			return OnSubmitHandler();
+		}
+	</SCRIPT>
+
+	<script language=javascript src="en_US_ICICI_Retail/pwdbase.js" ></script>
+	
+</HEAD>
+
+<BODY BGCOLOR="#ffffff" MARGINHEIGHT="0" MARGINWIDTH="0" LEFTMARGIN="0" TOPMARGIN="0" onload="OnPageInit();" onfocus="onFocusHandler();">
+	<div id="flashsetting">
+	<div id ="flashcontent"></div>
+	</div>
+	<div id="cookiediv">
+	</div>
+<FORM name="passwdForm" method=POST onsubmit="return OnSubmitHandler1();">
+
+<div id="PASSWDPAGE" style="display:none">
+<!-- This table centers the content area in the window, irregardless of the window's size -->
+<table border="0" cellspacing="1" cellpadding="1" width="450" align="center" class="payerForm" height="400" valign="middle">
+  <tr>
+    <td colspan="2" valign="top">
+	<table width="100%">
+
+		<tr>
+			<td width="80%"><IMG name="vpasLogo" SRC="en_US_ICICI_Retail/images/vpas_logo.gif"  BORDER=0 ALT="Verified by Visa"></td>
+	            <td width="20%" align=right><IMG name="memberLogo" src="en_US_ICICI_Retail/images/icici.gif"  BORDER=0 ALT="">
+	        </td>
+		</tr>
+	</table>
+	</td>
+  </tr>
+
+
+
+  <tr>
+    <td colspan=2>&nbsp;&nbsp;<FONT SIZE="2" COLOR="#CC3333"><I>Enter Your  3D Secure PIN</I></FONT>
+
+	<br>
+	<table border="0" cellspacing="0" cellpadding="0" width="97%" align="center"><tr><td>
+	<div style="text-align:justify">
+	<FONT SIZE="2" COLOR="black">Please enter your Verified by Visa<sup>&reg;</sup> 3D Secure PIN in the space provided below, to confirm your identity for this purchase. This information will not be shared with the merchant.</FONT>
+	</div>
+	</td></tr></table>
+	</td>
+
+  </tr>
+  <tr>
+    <td colspan=2>&nbsp;</td>
+  </tr>
+
+  <tr class="merchantName">
+    <td align=right>Merchant Name: </td><td> NATURES BASK-PAYU</td>
+  </tr>
+   </tr>
+
+
+   <tr class="merchantName">
+    <td align=right>Date: </td><td><SCRIPT LANGUAGE="javascript">document.writeln (date);</SCRIPT></td>
+  </tr>
+    <tr>
+    <td colspan=2><IMG height=1 src="en_US_ICICI_Retail/images/1pixel.gif" border=0></td>
+  </tr>
+  <tr>
+    <td align=right>Total Charge: </td><td> <span title="INR">INR</span> 10.00</td>
+
+  </tr>
+  <tr>
+    <td align=right>Card Number: </td><td>XXXX XXXX XXXX 2179</td>
+  </tr>
+  <tr>
+    <td align=right nowrap>Personal Message: </td><td  class="important"><SPAN ID="spanSecret" nowrap>3D Secure Authentication</SPAN></td>
+	</tr>
+
+  <tr>
+    <td align=right>Name: </td>
+     <td><script>
+
+		document.writeln(chname);
+
+		</script>
+	</td>
+  </tr>
+
+   <tr>
+    <td colspan=2><IMG height=5 src="en_US_ICICI_Retail/images/1pixel.gif" border=0></td>
+  </tr>
+  <tr class="errorType" align="center">
+
+      <td colspan=2 align="center">
+      <script>
+		  document.writeln('');
+      </script>
+      </td>
+
+	</tr>
+
+   <tr>
+    <td colspan=2><IMG height=5 src="en_US_ICICI_Retail/images/1pixel.gif" border=0></td>
+
+  </tr>
+
+  <tr id="pinfield">
+			<td align=right>3D Secure PIN: </td>
+			<td align=left><INPUT TYPE="password" NAME="pin" ID="txtPassword" maxlength="6" size="6" value="" autocomplete="off"><font face="Verdana" size="1" color="#808080"><b>&nbsp
+			<a href="#" style="text-decoration:none"  onclick="showhint('This is your 6-digit numeric PIN which you set during 3D Secure registration. This is not your ATM PIN.', this, event, '150px'); return false;">
+					[?]
+				</a>
+			</b></font></td>
+		  </tr>
+
+		<tr>
+			<td CLASS="smallNotes" id="otpLink">
+				<SCRIPT LANGUAGE=javascript>
+					document.writeln('<A TITLE=\"Click Here)\" HREF=\"javascript:showChannelSelectPage()\" onClick=\"closing=false\">(Authenticate using OTP)</A>');
+				</SCRIPT>
+			</td>
+			<td CLASS="smallNotes" align="right">
+				<SCRIPT LANGUAGE=javascript>
+					document.writeln('<A TITLE=\"Click Here)\" HREF=\"javascript:forgotPasswordLink(this)\" onClick=\"closing=false\">(forgot 3D Secure PIN?)</A>');
+				</SCRIPT>
+			</td>
+		</tr>
+
+  <tr>
+    <td colspan=2><IMG height=10 src="en_US_ICICI_Retail/images/1pixel.gif" border=0></td>
+  </tr>
+
+  	<tr>
+		<td align="center" colspan="2">
+		<div id="cmd123456" style="visibility:visible"><INPUT TYPE="submit" title="Click here to submit" NAME="submitval" VALUE="Submit" onClick="javascript:return submitPassword()" style="FONT-WEIGHT: bold; COLOR: #ffefd5; BACKGROUND-COLOR: #708090">
+		&nbsp;&nbsp;&nbsp;
+		<INPUT TYPE="button" NAME="cmdSubmit" ID="cmdSubmit" VALUE="Cancel" title="Click here to cancel"  onClick="JavaScript:closeButton(this); closing=false;" style="FONT-WEIGHT: bold; COLOR: #ffefd5; BACKGROUND-COLOR: #708090" >&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><div id="showtext" style="visibility:hidden" class="footNotes"><font size="2">Please wait...</font></div>
+		</td>
+	</tr>
+
+  <tr>
+    <td colspan="2" align="center" class="footNotes">
+	<br>
+	<FONT SIZE="1">This page will automatically timeout after 180 seconds.</font>
+	</td>
+  </tr>
+
+</table>
+</div>
+
+<div ID="pwdbaseotppage" style="display:none;">
+	<table border="0" cellspacing="1" cellpadding="1" width="450" align="center" class="payerForm" height="300">
+
+	 <tr height="2%">
+	   <td colspan="2" valign="top">
+		<table width="100%">
+			<tr>
+				<td width="80%"><IMG name="vpasLogo" SRC="en_US_ICICI_Retail/images/vpas_logo.gif"  BORDER=0 ALT="Verified by Visa"></td>
+	            <td width="20%" align=right><IMG name="memberLogo" src="en_US_ICICI_Retail/images/icici.gif"  BORDER=0 ALT="">
+				</td>
+			</tr>
+		</table>
+		</td>
+	  </tr>
+	  <tr height="2%">
+		<td colspan="2">&nbsp;&nbsp;<span class="optinheader"><I><SCRIPT LANGUAGE="javascript">
+										document.writeln ('Authenticate using OTP Step 2 of 3');
+									</SCRIPT></I></span>
+		<br>
+		<table border="0" cellspacing="0" cellpadding="0" width="97%" align="center"><tr><td>
+
+		<FONT SIZE="2" COLOR="black">We have successfully verified your details. We will now send a One Time Password (OTP) to your registered mobile number. For added security, you will be required to enter this password instead of your 3D Secure PIN.<br><br>
+		Below is the information stored in our database :
+		</FONT>
+		</td></tr>
+		</table>
+		</td>
+	  </tr>
+	<tr valign="top" >
+		<td align="center" colspan="2" valign="middle">
+			  <table width="70%" align="center" border="0" cellspacing="1" cellpadding="1">
+				<!--<SCRIPT LANGUAGE="javascript">
+				if(email != 'null' && email != "") {
+					document.writeln('<tr><td><div align="right" class="payerForm1"><nobr>E-Mail:</nobr></div></td><td class="normal"><b>'+email+'</b></td></tr>');
+				}
+				</SCRIPT>-->
+				<SCRIPT LANGUAGE="javascript">
+				if(mobilenumber != 'null' && mobilenumber != "") {
+					document.writeln('<tr><td><div align="right" class="payerForm1" ><nobr>Mobile Number:</nobr></div></td><td class="normal"><b>'+mobilenumber+'</b></td></tr>');
+				}
+				</SCRIPT>
+
+				</table>
+			</td>
+		</tr>
+		<tr >
+		<td colspan="2">&nbsp;&nbsp;<FONT SIZE="2" COLOR="#CC3333"></FONT>
+		<br>
+
+		<table border="0" cellspacing="0" cellpadding="0" width="97%" align="center">
+		<tr><td>
+		<FONT SIZE="2" COLOR="black">Please select your preferred option to receive the OTP:</FONT>
+		</td>
+		</tr>
+		<tr  valign="top" >
+			<td  colspan="2"  >
+				<div class="normalBlack" style="margin-left:30px">
+					<font size="2" color="black">
+					<script>
+					/*if(email != 'null' && email != "" && mobilenumber != 'null' && mobilenumber != ""){
+						document.writeln('<input type="radio" name="otpDestinationOption" value="FromMobFromEmail" checked>Mobile Number & Email Address<br/>');
+					} else {
+						document.writeln('<input type="hidden" name="otpDestinationOption" value="FromMobFromEmail">');
+					}
+					if(email != 'null' && email != "") {
+						document.writeln('<input type="radio" name="otpDestinationOption" value="FromEmail">Email Address<br/>');
+					} else {
+						document.writeln('<input type="hidden" name="otpDestinationOption" value="FromEmail">');
+					}*/
+					if(mobilenumber != 'null' && mobilenumber != "") {
+						document.writeln('<input type="radio" name="otpDestinationOption" value="FromMob">Mobile Number<br/>');
+					} else {
+						document.writeln('<input type="hidden" name="otpDestinationOption" value="FromMob">');
+					}
+
+					document.writeln('<input type="radio" name="otpDestinationOption" value="UnusedOTP">I have an unused OTP, received within the last&nbsp;15&nbsp;minutes<br/>');
+
+					document.writeln('<input type="radio" name="otpDestinationOption" value="NOTMATCH">My details do not match<br/>');
+					</script>
+					<font>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+			&nbsp;
+			</td>
+		</tr>
+
+		  <tr>
+			<td width="52%" height="20" colspan="2" align="center">
+			<IMG SRC="en_US_ICICI_Retail/images/1pixel.gif" WIDTH="1" HEIGHT="20" BORDER="0">
+			<input type="Image" SRC="en_US_ICICI_Retail/images/btn_submit.gif" width="51" height="18" name="I1" onclick="return pwdBaseOtpChannelSelected(1);">
+			<IMG SRC="en_US_ICICI_Retail/images/1pixel.gif" WIDTH="20" HEIGHT="1" BORDER="0">
+			<a HREF="" onClick="javascript:return showPwdPage()">
+			<IMG SRC="en_US_ICICI_Retail/images/btn_cancel.gif" BORDER="0" width="50" height="18" usemap="#FPMap0"></a>
+			</td>
+		  </tr>
+
+		</table>
+		</td>
+		</tr>
+			<tr valign="top">
+				<td colspan="2" align="center" class="bodyText">
+				<FONT SIZE="1">This page will automatically timeout after 180 seconds.</font>
+				</td>
+		  </tr>
+	</table>
+</div>
+
+
+<div id="enterotppage" style="display:none">
+<!-- This table centers the content area in the window, irregardless of the window's size -->
+<table border="0" cellspacing="1" cellpadding="1" width="450" align="center" class="payerForm" height="400" valign="middle">
+	<tr>
+		<td colspan="2" valign="top">
+			<table width="100%">
+				<tr>
+					<td width="80%"><IMG name="vpasLogo" SRC="en_US_ICICI_Retail/images/vpas_logo.gif"  BORDER=0 ALT="Verified by Visa"></td>
+					<td width="20%" align=right><IMG name="memberLogo" src="en_US_ICICI_Retail/images/icici.gif"  BORDER=0 ALT=""></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+
+	<tr>
+		<td colspan=2>&nbsp;&nbsp;
+			<FONT SIZE="2" COLOR="#CC3333"><I>Authenticate using OTP Step 3 of 3</I></FONT>
+			<br>
+			<table border="0" cellspacing="0" cellpadding="0" width="97%" align="center">
+				<tr>
+					<td>
+						<div style="text-align:justify"><FONT SIZE="2" COLOR="black">Your One Time Password (OTP) has been sent. Once you receive it, please enter it in the space provided below.</FONT></div>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+
+	<tr class="errorType" align="center">
+      <td colspan=2 align="center">
+      <script>
+		  document.writeln('');
+      </script>
+      </td>
+	</tr>
+
+  	     <tr>
+			<td >
+		  <div align="right"  class="payerForm1">OTP:</div>
+		</td>
+		<td class="normal" >
+			  &nbsp;<INPUT TYPE="password" NAME="otpPassword" ID="txtAutoOtp" maxlength="6" size="7" value="" autocomplete="off">
+			</td>
+		 </tr>
+
+
+  	<tr>
+		<td align="center" colspan="2">
+		<div id="cmd123456" style="visibility:visible"><INPUT TYPE="submit" title="Click here to submit" NAME="submitval" VALUE="Submit" onClick="javascript:return submitPassword()" style="FONT-WEIGHT: bold; COLOR: #ffefd5; BACKGROUND-COLOR: #708090">
+		&nbsp;&nbsp;&nbsp;
+		<INPUT TYPE="button" NAME="cmdSubmit" ID="cmdSubmit" VALUE="Cancel" title="Click here to cancel"  onClick="JavaScript:closeButton(this); closing=false;" style="FONT-WEIGHT: bold; COLOR: #ffefd5; BACKGROUND-COLOR: #708090" >&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><div id="showtext" style="visibility:hidden" class="footNotes"><font size="2">Please wait...</font></div>
+		</td>
+	</tr>
+
+  <tr>
+    <td colspan="2" align="center" class="footNotes">
+	<br>
+	<FONT SIZE="1">This page will automatically timeout after 180 seconds.</font>
+	</td>
+  </tr>
+
+</table>
+</div>
+
+<input type="hidden" name="submitted" value="0">
+<SCRIPT>
+document.writeln ('<input type="hidden" name="authType" value="Visa Password">');
+</SCRIPT>
+<NOSCRIPT>
+<input type="hidden" name="authType" value="Visa Password">
+</NOSCRIPT>
+<input type="hidden" name="cancelHit" value="0">
+<input type="hidden" name="forgotPassword" value="0">
+<input type="hidden" name="cardHolder" value="">
+<input type="hidden" name="Userid" value="">
+<input type="hidden" name="authDefaultSelect" value="Visa Password">
+<input type="hidden" name="AuthFallBack" value="">
+<input type="hidden" name="Phase" value="passwd">
+<input type="hidden" name="tryIndex" value="1">
+<input type="hidden" name="PaReq" value="eJxVUtFygjAQ/BXH105JQKCtc2YmYKemtMiAVvvIYCqMAhLA6t83Uajt2+3e5rK3CSxSwfk04kkrOIF3Xtfxlg+yzWR4+so13TIeTOtxSCCgIa8IHLmos7IguoY1A1AP5UGRpHHREIiTymE+MS370ZCKDkLOBZuSYGu4WZM5cbEDdKWgiHNOfLpYhs/RwKGRdx/QzyWgCw9J2RaNOJORZQPqAbRiT9KmOdRjhFarleayBXOo72nuXGM+INUHdDMVtKqq5bxTtiHV2bcrzyxDK8rSt/XdS57uZ1vmON+7CSClgE3ccGJg3cK2bg300RjrY/wE6MJDnCsjRMcaxnLFK4KDuoT2LdX5y4BMWPAi6VfpEfDToSy4VMi0fmtAN8vuTKWaNDIslyah74SvxfJ8ZGsjpd78g9HeeSdSEzOZkm5j8zJSAUBqDOqeEXUPLat/H+AH7Qms1Q==">
+<input type="hidden" name="TermUrl" value="https://www.citibank.co.in/servlets/VerifyPARes" >
+<input type="hidden" name="MD" value="qyN6qK4oR5SihLX+GmhlHgIBBwk=;10.00;356|N1p3V2MRm7XhNsrSTR9931KcRw12vGvN!-304186144!2017238938!1434373265516">
+<input type="hidden" name="ARCOTC" value="">
+<input type="hidden" name="ARCOTR" value="">
+<input type="hidden" name="Locale" value="en_US_ICICI_Retail/">
+<input type="hidden" name="RFInreaseAuthAction" value="0">
+<input type="hidden" name="RFIsEMailPresentForIncreaseAuth" value="">
+<input type="hidden" name="CookieType" value="0">
+<!--The fields below were added for Chip Card Authentication-->
+<input type="hidden" name="VSDCInput" value="1000$356$356$20150615$000$qyN6qK4oR5SihLX+GmhlHgIBBwk=">
+<input type="hidden" name="VSDCData" value="">
+<input type="hidden" name="ChipPluginName" value="" >
+<input type="hidden" name="ChipPluginVersion" value="" >
+<input type="hidden" name="ChipPluginPresent" value="TRUE">
+<input type="hidden" name="eAccessPresent" value="FALSE">
+<input type="hidden" name="eAccessRequired" value="FALSE">
+<input type="hidden" name="ChipSecret" value="">
+<input type="hidden" name="AcsCookie" value="Z+KpOaUcmhhn3S1teg3Vt2Zt5chZ6P7xGft2rzY5ZvcFH6p94tqye65/8uyBsgjEarP7CVu+WEQ1nurDr5p1PrJD5C669QegoLowFrhJ38I7y1L0qwWTO+ZqOzPEgE0YSWFYdZoXx60ptT+3I+EHWJiul/youXB6JfCCcDAY8i/wPjJsJm53Y5NGAkDxwX/6a/I0e2WpqTXLcA+WhsQLxI+0fe66kTsfT2h4bKjKMJU7qfawgYKZtQ==">
+<input type="hidden" name="DeviceID" value="">
+<input type="hidden" name="CustData" value="">
+</FORM>
+<!-- End of centering table -->
+
+
+<SCRIPT LANGUAGE="JavaScript">
+		var limit = 0;
+		var stopTimer = 0;
+		function doTimer(){
+			//alert("stoptimer " + stopTimer);
+			if(stopTimer!=0) {
+				return;
+			}
+			if (limit < 10){
+				limit++;
+				//alert("setTimeout");
+				setTimeout("doTimer();", 18000);
+			}else{
+
+				ForceCancel();
+			}
+		}
+
+	doTimer();
+</SCRIPT>
+</BODY>
+
+</HTML>

@@ -1,0 +1,340 @@
+
+<html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<HEAD>
+<TITLE>Mastercard Securecode - Payer Authentication...</TITLE>
+<STYLE>
+.bodyText{
+	FONT-SIZE: 11px; COLOR: #808080; FONT-FAMILY: Tahoma, Helvetica, Arial; FONT-WEIGHT: normal
+}
+.payerForm
+{
+    COLOR: navy;
+    FONT-FAMILY: Verdana;
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 10pt
+}
+.errorType
+{
+    COLOR: red;
+    FONT-FAMILY: Verdana;
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 10pt
+}
+.merchantName
+{
+    COLOR: #808000;
+    FONT-FAMILY: Verdana;
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 10pt
+}
+.important
+{
+    COLOR: #FF0000;
+    FONT-FAMILY: Verdana;
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 10pt
+}
+.smallNotes
+{
+    COLOR: navy;
+    FONT-FAMILY: Verdana;
+    FONT-SIZE: 8pt
+}
+.footNotes
+{
+    COLOR: #808080;
+    FONT-FAMILY: Verdana;
+    FONT-SIZE: 5pt;
+	FONT-WEIGHT: normal;
+}
+.normal
+{
+    COLOR: navy;
+    FONT-FAMILY: Verdana;
+    FONT-WEIGHT: normal;
+    FONT-SIZE: 8pt
+}
+</STYLE>
+<SCRIPT LANGUAGE="JAVASCRIPT">
+	var secretArray = new Array(1);
+	
+		secretArray[0] = "R9zKWvuQv/KVpqpO7zbIJ+ISm3IHxF2bi+HZJaJ3W3o=";
+	 
+	
+	var noSubmit = 0;
+	function ValidateForm(){
+		if(noSubmit==1) return false;
+
+		if (!Blanks_Validation(document.frmPayerAuth.txtLogin.value)){
+			alert("Login Id cannot be blank. Please enter your loginid for authentication");
+			document.frmPayerAuth.txtLogin.focus();
+			return false;
+		 }
+		 if (!Blanks_Validation(document.frmPayerAuth.password.value)){
+			alert("Password cannot be blank. Please enter your password for authentication");
+			document.frmPayerAuth.password.focus();
+			return false;
+		 }
+		 stopTimer = 1;
+		document.getElementById("cmd123456").style.visibility="hidden";
+		document.getElementById("showtext").style.visibility="visible";		
+		noSubmit = 1;
+		return true;
+	}
+	function Blanks_Validation(sValue){
+		var iLen = sValue.length; 
+		var pad = " ";			
+		for (i=1 ; i < iLen ; i++){
+			pad = pad + " ";
+		}
+		if ((sValue != "") && (sValue != pad)){
+			return true;
+		}else{				
+			return false;
+		}
+	}
+	function showSharedSecret(){
+		var iIndex = document.frmPayerAuth.txtLogin.selectedIndex;
+		alert(iIndex);
+		alert(secretArray[iIndex]);
+		spanSecret.innerHTML = secretArray[iIndex];
+	}
+	function cancelAction(){
+		var choice = confirm("The transaction may not go through if you do not provide your password");
+		if (choice){
+			document.getElementById("cmd123456").style.visibility="hidden";
+			document.getElementById("showtext").style.visibility="visible";		 
+			document.frmPayerAuth.action = "/ACSWeb/EnrollWeb/AxisBank/server/AccessControlServer;jsessionid=XP8zw0d6m-l20UQ62razn2w-?perform=USER_AUTH&CANCEL=true";
+			document.frmPayerAuth.submit();
+		}else{
+			//alert("staying");
+		}
+	}	
+	function forgot_password() 
+	{ 
+  		window.location="/ACSWeb/EnrollWeb/AxisBank/server/EnrollServer;jsessionid=XP8zw0d6m-l20UQ62razn2w-?perform=forgotPasswordAuth&ISSUER_ID=8111&cardType=M";
+ 	} 	
+	function PostNotAuthenticated(){
+		document.frmPayerAuth.action = "/ACSWeb/EnrollWeb/AxisBank/server/AccessControlServer;jsessionid=XP8zw0d6m-l20UQ62razn2w-?perform=USER_AUTH&CANCEL=true";
+			document.frmPayerAuth.submit();
+	}
+
+	function doOnLd(){
+		document.frmPayerAuth.password.focus();
+	}
+
+	
+</SCRIPT>
+</HEAD>
+<BODY onLoad="doOnLd();">
+
+<!--<table border="1" cellspacing="0" cellpadding="0" width="100%">
+  <tr> 
+    <td width="80%"><IMG alt="Verified by Visa" src="../images/vbv_logo.jpg" border=0 ></td>
+    <td width="20%" align=right><IMG height=28 alt="Bank Logo" src="../images/logo.gif" width=152 border=0 ></td>
+  </tr>  
+</table>-->
+
+<FORM NAME="frmPayerAuth" ID="frmPayerAuth" METHOD="POST" ACTION="/ACSWeb/EnrollWeb/AxisBank/server/AccessControlServer;jsessionid=XP8zw0d6m-l20UQ62razn2w-?perform=USER_AUTH&CANCEL=false&ISSUER_ID= 8111" onSubmit="return ValidateForm();">
+
+<table border="0" bordercolor="black" cellspacing="0" cellpadding="0"  width="390" align="center">
+	
+	<!--
+	<tr bgcolor="black"> 
+    <td colspan=2>
+		<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr><td width="50%" align="left">
+	<IMG alt="Mastercard Securecode" src="../images/Mastercard_Securecode.gif" border=0></td>
+	<td width="50%" align="right"><IMG alt="Mastercard Securecode" src="../images/mc_brand_050_gif.gif" border=0 width="80"></td>
+		</tr></table>
+	</td>
+  </tr>
+  -->
+  <tr><td>
+	
+		<input type="hidden" name="XID" value="KASvTjGeT/vBhWivQfFPyGUvKh0=" >
+	
+<table border="0" cellspacing="1" cellpadding="1" width="390" align="center" class="payerForm">
+	<tr colspan=2> 
+	<td><IMG HEIGHT=10 src="../images/1pixel.gif" border=0></td>
+	</tr>
+ <tr> 
+	<td><IMG WIDTH=10 src="../images/1pixel.gif" border=0><IMG SRC="../images/Mastercard_Securecode_bg.gif" WIDTH="113" HEIGHT="64" BORDER="0" ALT="Mastercard Securecode"></td>
+    
+    <td align="right"><IMG alt="Bank Logo" src="../images/logo.gif" border=0><IMG WIDTH=10 src="../images/1pixel.gif" border=0></td>
+  </tr>
+  	<tr colspan=2> 
+	<td><IMG HEIGHT=8 src="../images/1pixel.gif" border=0></td>
+	</tr>
+
+  <tr> 
+    <td colspan=2>&nbsp;&nbsp;<FONT SIZE="2" COLOR="#CC3333"><I>Enter Your Password</I></FONT>
+	<br>
+	<table border="0" cellspacing="0" cellpadding="0" width="97%" align="center"><tr><td>
+	<FONT SIZE="2" COLOR="black">Please enter your MasterCard<sup>&reg;</sup> SecureCode<sup>&trade;</sup> password in the field below to confirm your identity for this purchase. This information is not shared with the merchant.</FONT>
+	</td></tr></table>
+	</td>
+  </tr>
+  <tr> 
+    <td colspan=2><IMG height=2 src="../images/1pixel.gif" border=0></td>
+  </tr>
+
+  <tr class="merchantName"> 
+    <td align=right>Merchant Name: </td><td> Tenmiles technologies Pri</td>
+  </tr> 
+   </tr>
+
+
+   <tr class="merchantName"> 
+    <td align=right>Date: </td><td>Jun 15, 2015</td>
+  </tr>
+    <tr> 
+    <td colspan=2><IMG height=1 src="../images/1pixel.gif" border=0></td>
+  </tr>
+  <tr> 
+    <td align=right>Total Charge: </td><td> <span title="INR 10.06"">&#82;&#115; 10.06</span></td>
+  </tr>  
+  <tr> 
+    <td align=right>Card Number: </td><td>XXXX XXXX XXXX 9868</td>
+  </tr>
+  <tr> 
+    <td align=right nowrap>Personal Message: </td><td  class="important"><SPAN ID="spanSecret" nowrap>Solutions for a life time</SPAN></td>
+ 
+  <tr> 
+    <td colspan=2><IMG height=1 src="../images/1pixel.gif" border=0></td>
+  </tr>
+  
+  <tr> 
+    <td colspan=2 class="normal" align="center">&nbsp;</td>
+  </tr>
+	
+  <tr> 
+    <td align=right>Name: </td><td>
+
+<INPUT TYPE="HIDDEN" NAME="txtLogin" VALUE="2362063">
+	
+
+</td>
+  </tr>
+   <tr> 
+    <td align=right>Password : </td><td><INPUT TYPE="password" NAME="txtPassword" id="password" MAXLENGTH="15" SIZE="30" VALUE="">
+	 <input type="hidden" name="txtUserId" size="15" maxlength="30">
+	 </td>
+  </tr> 
+  <tr> 
+    <td colspan=2><IMG height=10 src="../../../images/1pixel.gif" border=0></td>
+  </tr>
+
+  <tr> 
+    <td colspan=2><IMG height=10 src="../../../images/1pixel.gif" border=0></td>
+  </tr>
+  
+
+	 <tr> 	
+	<td align=right>&nbsp; </td><td CLASS="smallNotes">
+	<script type="text/javascript">
+	document.write('(forgot password? <A HREF="javascript:forgot_password()" id="forgotPasswordLink"> Click Here) </A>');
+	</script>
+
+	<noscript>
+		(forgot password? <A HREF="../../EnrollHandler;jsessionid=XP8zw0d6m-l20UQ62razn2w-?perform=forgotPasswordAuth&ISSUER_ID=8111"> Click Here) </A>
+	</noscript>
+	</td>
+  </tr>
+  
+  
+  <tr> 
+    <td colspan=2><IMG height=10 src="../images/1pixel.gif" border=0></td>
+  </tr>
+  <tr> 
+    <td align="center" colspan="2"><div id="cmd123456" style="visibility:visible"><INPUT TYPE="submit" NAME="cmdSubmit" id="submitButton" VALUE="Submit" title="Click here to submit" style="FONT-WEIGHT: bold; COLOR: #ffefd5; BACKGROUND-COLOR: #708090">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<INPUT TYPE="button" NAME="cmdSubmit" id="cancelButton" VALUE="Cancel" title="Click here to submit" style="FONT-WEIGHT: bold; COLOR: #ffefd5; BACKGROUND-COLOR: #708090" onClick="javascript:cancelAction()">&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><div id="showtext" style="visibility:hidden" class="footNotes"><font size="2">Please wait...</font></div><SPAN CLASS="normal">
+<!--<A HREF="#">NEED HELP?</A>--></SPAN></td>
+  </tr>
+
+  
+ <tr> 
+</table></td></tr>
+<!--
+<tr bgcolor="black"> 
+    <td colspan=2>
+	&nbsp;
+	</td>
+  </tr>  
+ -->
+  <tr> 
+    <td colspan="2" align="center" class="footNotes">
+	<br>
+	<FONT SIZE="1">This page will automatically timeout after 120 seconds.</font> <br/>
+	</td>
+  </tr>
+
+   
+		<tr> 
+			 <td colspan="2" align = "center">
+				
+<span style='FONT-SIZE: 11px; COLOR: #808080; FONT-FAMILY: Tahoma, Helvetica, Arial; FONT-WEIGHT: normal'>Powered by </span>
+<span style='font-size:9.0pt;font-family:"Georgia","serif";color:#FC7404'>en</span><span style='font-size:9.0pt;font-family:"Georgia","serif";color:#0070C0'>Stage</span>
+
+
+			</td>
+		</tr>
+   
+			
+
+</table>
+
+</FORM>
+
+<SCRIPT LANGUAGE="JAVASCRIPT">
+var limit = 0;
+var stopTimer = 0;
+function doTimer(){
+	if(stopTimer!=0) {
+		return;
+	}
+	if (limit < 10){
+		limit++;
+		//alert("setTimeout");
+		the_timeout = setTimeout("doTimer();", 12000);			
+	} else {
+		PostNotAuthenticated();	
+	}
+}
+doTimer();
+</SCRIPT>
+
+
+	<table border="0" width="100%" align="center">
+				<tr align="center"><td><IMG alt="Axis Bank banner text" src="../images/banner.jpg" border=0 ></td></tr>
+		</table>
+
+
+
+	<script type="text/javascript">
+		var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+		document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+	</script>
+	<script type="text/javascript">
+		try {
+		var pageTracker = _gat._getTracker("UA-8729575-6");
+		pageTracker._trackPageview();
+		} catch(err) {}
+	</script>
+	
+</BODY>
+</HTML>
+
+
